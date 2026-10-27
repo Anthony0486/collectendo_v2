@@ -95,6 +95,9 @@ export function RegisterForm({ isConfigured }: { isConfigured: boolean }) {
               name="email"
               type="email"
               required
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoComplete="email"
               placeholder="ton.email@exemple.fr"
               className="w-full rounded-xl border border-red-200 bg-[#f9f9f9] px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#e60012] focus:bg-white focus:outline-none"
             />

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { type AuthActionState, signInAction } from "@/app/auth/actions";
 
 const initialState: AuthActionState = {};
@@ -11,6 +11,7 @@ export function LoginForm({ isConfigured }: { isConfigured: boolean }) {
     signInAction,
     initialState
   );
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="mx-auto max-w-lg rounded-3xl border border-red-100 bg-white p-6 shadow-sm sm:p-8">
@@ -36,13 +37,9 @@ export function LoginForm({ isConfigured }: { isConfigured: boolean }) {
             </code>{" "}
             et{" "}
             <code className="rounded bg-amber-100 px-1 py-0.5 font-mono">
-              NEXT_PUBLIC_SUPABASE_ANON_KEY
+              NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
             </code>{" "}
-            dans ton fichier{" "}
-            <code className="rounded bg-amber-100 px-1 py-0.5 font-mono">
-              .env.local
-            </code>{" "}
-            pour activer la connexion.
+            dans tes variables d’environnement pour activer la connexion.
           </p>
         </div>
       ) : null}
@@ -66,23 +63,38 @@ export function LoginForm({ isConfigured }: { isConfigured: boolean }) {
             name="email"
             type="email"
             required
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoComplete="email"
             placeholder="ton.email@exemple.fr"
             className="w-full rounded-xl border border-red-200 bg-[#f9f9f9] px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#e60012] focus:bg-white focus:outline-none"
           />
         </div>
 
         <div className="space-y-1.5">
-          <label
-            htmlFor="password"
-            className="block text-sm font-semibold text-slate-800"
-          >
-            Mot de passe
-          </label>
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold text-slate-800"
+            >
+              Mot de passe
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="text-xs font-medium text-[#e60012] hover:text-[#c70010]"
+            >
+              {showPassword ? "Masquer" : "Afficher"}
+            </button>
+          </div>
           <input
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoComplete="current-password"
             placeholder="Ton mot de passe"
             className="w-full rounded-xl border border-red-200 bg-[#f9f9f9] px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#e60012] focus:bg-white focus:outline-none"
           />
@@ -109,4 +121,3 @@ export function LoginForm({ isConfigured }: { isConfigured: boolean }) {
     </div>
   );
 }
-

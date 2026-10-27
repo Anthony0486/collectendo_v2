@@ -3,6 +3,8 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { getCurrentUser, isSupabaseConfigured } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function ConnexionPage() {
   const user = await getCurrentUser();
 

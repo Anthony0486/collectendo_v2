@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   createSupabaseServerClient,
@@ -24,7 +25,7 @@ export async function signUpAction(
   }
 
   const username = String(formData.get("username") || "").trim();
-  const email = String(formData.get("email") || "").trim();
+  const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
   const confirmPassword = String(formData.get("confirmPassword") || "");
 
@@ -66,10 +67,16 @@ export async function signUpAction(
     };
   }
 
+  const headersList = await headers();
+  const origin =
+    headersList.get("origin") ||
+    (headersList.get("host") ? `https://${headersList.get("host")}` : "");
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: origin ? `${origin}/auth/callback` : undefined,
       data: {
         username,
         display_name: username,
@@ -105,7 +112,7 @@ export async function signInAction(
     };
   }
 
-  const email = String(formData.get("email") || "").trim();
+  const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
 
   if (!email || !password) {
@@ -122,8 +129,14 @@ export async function signInAction(
   });
 
   if (error) {
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+      return {
+        error:
+          "Ton adresse e-mail n'a pas encore été confirmée. Vérifie ta boîte mail.",
+      };
+    }
     return {
-      error: "Identifiants incorrects ou compte non confirmé.",
+      error: `Identifiants incorrects (${error.message}). Vérifie ton adresse e-mail et ton mot de passe.`,
     };
   }
 
